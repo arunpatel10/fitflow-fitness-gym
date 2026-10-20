@@ -47,7 +47,7 @@ input[type=date],input[type=number]{min-height:44px}
 <div class="layout"><div><div class="section head"><h2>Today's workout</h2><button class="btn ghost" onclick="page('workout')">View plan</button></div><div class="card"><div class="row"><span class="pill">STRENGTH · 35 MIN</span><span style="font-size:30px">🏋️</span></div><h3 id="homeWorkoutName">Full Body Foundations</h3><p class="muted small">A balanced session to build strength and confidence.</p><p class="muted small" id="homeExerciseCount">5 exercises · Beginner</p><button class="btn full" onclick="page('workout')">Open workout</button></div></div>
 </div></div></div><div class="foot">Your data stays in this browser on this device.</div></section>
 
-<section id="workout" class="page"><div class="section head"><div><h2>Workout studio</h2><div class="muted small">Track sets, reps and weights.</div></div><button class="btn secondary" onclick="timerOpen(60)">⏱ Rest</button></div><div class="tabs" id="tabs"><button class="active" onclick="choose('Chest',this)">Chest</button><button onclick="choose('Biceps',this)">Biceps</button><button onclick="choose('Shoulder',this)">Shoulder</button><button onclick="choose('Triceps',this)">Triceps</button><button onclick="choose('Legs',this)">Legs</button><button onclick="choose('Core',this)">Core</button><button onclick="choose('Cardio',this)">Cardio</button><button onclick="choose('At Home',this)">At Home</button></div><div class="card"><div class="eyebrow" style="color:var(--lime)">TODAY'S SESSION</div><h2 id="routineTitle">Full Body Foundations</h2><p class="muted small" id="routineMeta">5 exercises · 3 sets each</p><button class="btn" onclick="finishWorkout()">Finish workout ✓</button></div><div id="exercises"></div><div class="notice">Use controlled form and a manageable weight. Stop if you feel sharp pain. These text cues are general guidance, not a substitute for in-person coaching.</div></section>
+<section id="workout" class="page"><div class="section head"><div><h2>Workout studio</h2><div class="muted small">Track sets, reps and weights.</div></div><button class="btn secondary" onclick="timerOpen(60)">⏱ Rest</button></div><div class="tabs" id="tabs"><button class="active" onclick="choose('Chest',this)">Chest</button><button onclick="choose('Back',this)">Back</button><button onclick="choose('Biceps',this)">Biceps</button><button onclick="choose('Shoulder',this)">Shoulder</button><button onclick="choose('Triceps',this)">Triceps</button><button onclick="choose('Legs',this)">Legs</button><button onclick="choose('Core',this)">Core</button><button onclick="choose('Cardio',this)">Cardio</button><button onclick="choose('At Home',this)">At Home</button></div><div class="card"><div class="eyebrow" style="color:var(--lime)">TODAY'S SESSION</div><h2 id="routineTitle">Full Body Foundations</h2><p class="muted small" id="routineMeta">5 exercises · 3 sets each</p><button class="btn" onclick="finishWorkout()">Finish workout ✓</button></div><div id="exercises"></div><div class="notice">Use controlled form and a manageable weight. Stop if you feel sharp pain. These text cues are general guidance, not a substitute for in-person coaching.</div></section>
 
 
 
@@ -98,6 +98,15 @@ const routines={
 ['Pec deck fly','Chest','10–15','🦋','Keep your back against the pad and use a comfortable range.'],
 ['Decline push-up','Lower chest · Shoulders','6–12','🤸','Use a stable foot support and stop if your shoulders feel uncomfortable.'],
 ['Dumbbell pullover','Chest · Back','10–12','🏋️','Use a light weight and move only through a comfortable shoulder range.']],
+'Back':[
+['Lat pulldown','Lats · Biceps','8–12','⬇️','Pull the bar to upper chest, drive elbows down and avoid leaning far back.'],
+['Seated cable row','Mid back · Lats','10–12','🚣','Sit tall, pull elbows back and squeeze shoulder blades without rocking.'],
+['One-arm dumbbell row','Lats · Mid back','8–12 / side','🏋️','Keep your back flat, pull the weight toward your hip and lower with control.'],
+['Bent-over barbell row','Back · Rear delts','6–10','🏋️','Hinge at the hips with a neutral spine and use a load you can control.'],
+['Assisted pull-up','Lats · Biceps','6–10','⬆️','Start from a full hang, pull chest toward the bar and lower slowly.'],
+['Straight-arm pulldown','Lats','10–15','〰️','Keep arms nearly straight and sweep the bar down using your lats.'],
+['Chest-supported row','Mid back · Rear delts','10–12','💪','Keep your chest on the pad and pull elbows back without lifting your torso.'],
+['Back extension','Lower back · Glutes','10–15','↗️','Move through a comfortable range and stop when your body is in a straight line.']],
 'Biceps':[
 ['Dumbbell curl','Biceps','10–15','💪','Keep elbows near your sides and avoid swinging your torso.'],
 ['Hammer curl','Biceps · Forearms','10–12','🔨','Keep palms facing inward and lower each rep slowly.'],
@@ -181,8 +190,55 @@ function makeExerciseVisual(name){
  const ground='<path d="M18 157 H322" stroke="#465044" stroke-width="2" stroke-dasharray="5 6"/>';
  const phase=(d,cls)=>`<g class="phase ${cls}">${d}</g>`;
  let a='',b='',props='',caption='';
- // Chest: distinct bench, incline, machine, fly and floor-press mechanics
- if(n==='barbell bench press'){
+ // Back: pulling and extension mechanics
+ if(['lat pulldown','seated cable row','one-arm dumbbell row','bent-over barbell row','assisted pull-up','straight-arm pulldown','chest-supported row','back extension'].includes(n)){
+   if(n==='lat pulldown'){
+     props=`<path d="M70 12 H270 M170 12 V20" stroke="${muted}" stroke-width="6"/><path d="M135 128 H205 V150 M150 118 H190" stroke="${muted}" stroke-width="7" fill="none"/>`;
+     let body=H(170,52)+L('170 64 L170 118 L212 122 L216 148')+L('170 118 L150 128 L146 148');
+     a=body+L('170 74 L142 48 L128 24 M170 74 L198 48 L212 24')+M('112 22 H228');
+     b=body+L('170 74 L146 96 L132 72 M170 74 L194 96 L208 72')+M('116 72 H224');
+     caption='Pull bar to upper chest · elbows down';
+   }else if(n==='seated cable row'){
+     props=`<path d="M40 145 H300 M40 70 V145" stroke="${muted}" stroke-width="6"/><path d="M190 125 H230" stroke="${muted}" stroke-width="7"/>`;
+     let body=H(195,56)+L('196 68 L200 118')+L('200 118 L150 124 L128 142');
+     a=body+L('196 84 L152 96 L110 100')+M('104 92 V108')+M('42 100 H104');
+     b=body+L('196 84 L184 104 L162 101')+M('158 93 V109')+M('42 100 H158');
+     caption='Pull handle to stomach · squeeze shoulder blades';
+   }else if(n==='one-arm dumbbell row'){
+     props=`<path d="M60 110 H170 M75 110 V148 M155 110 V148" stroke="${muted}" stroke-width="7"/>`;
+     let body=H(88,80)+L('99 85 L205 96')+L('205 96 L215 125 L215 148 M205 96 L240 128 L245 148')+L('125 90 L125 110');
+     a=body+L('138 91 L139 118 L139 134')+D(139,138);
+     b=body+L('138 91 L172 96 L158 112')+D(158,115);
+     caption='Keep back flat · pull weight toward hip';
+   }else if(n==='bent-over barbell row'){
+     let body=H(95,70)+L('106 76 L200 100')+L('200 100 L190 125 L180 148 M200 100 L215 125 L215 148');
+     a=body+L('128 83 L130 118 L130 126')+M('108 126 H152');
+     b=body+L('128 83 L162 94 L136 108')+M('116 108 H160');
+     caption='Hinge forward · pull bar to lower ribs';
+   }else if(n==='assisted pull-up'){
+     props=`<path d="M100 20 H240 M110 20 V6 M230 20 V6" stroke="${muted}" stroke-width="6"/><path d="M135 150 H205" stroke="${muted}" stroke-width="7"/>`;
+     a=H(170,76)+L('170 88 L170 126 L160 150 M170 126 L182 150')+L('170 96 L142 58 L132 22 M170 96 L198 58 L208 22');
+     b=H(170,40)+L('170 52 L170 92 L160 118 M170 92 L182 118')+L('170 62 L146 46 L134 22 M170 62 L194 46 L206 22');
+     caption='Pull chest toward bar · lower slowly';
+   }else if(n==='straight-arm pulldown'){
+     props=`<path d="M42 20 V145 M42 24 H120" stroke="${muted}" stroke-width="6"/>`;
+     let body=H(195,36)+L('195 48 L202 100 L186 145 M202 100 L218 145');
+     a=body+L('195 62 L165 50 L132 32')+M('60 26 L132 32');
+     b=body+L('195 62 L208 86 L214 108')+M('60 26 L214 108');
+     caption='Keep arms straight · sweep bar down to thighs';
+   }else if(n==='chest-supported row'){
+     props=`<path d="M70 140 L245 68 M95 130 V152 M225 76 V152" stroke="${muted}" stroke-width="7" fill="none"/>`;
+     let body=H(236,48)+L('225 56 L125 98')+L('125 98 L100 128 L96 148');
+     a=body+L('208 64 L206 104 L206 124')+D(206,128);
+     b=body+L('208 64 L176 84 L192 100')+D(192,103);
+     caption='Chest on pad · pull elbows back and squeeze';
+   }else{
+     props=`<path d="M130 112 H175 M152 112 V150 M205 125 L225 150" stroke="${muted}" stroke-width="7" fill="none"/>`;
+     a=H(88,140)+L('99 136 L152 100')+L('152 100 L210 124 L222 148');
+     b=H(80,78)+L('90 82 L152 100')+L('152 100 L210 124 L222 148');
+     caption='Raise torso to a straight line · do not overarch';
+   }
+ }else if(n==='barbell bench press'){
    props=`<path d="M65 129 H275 M80 129 V150 M260 129 V150" stroke="${muted}" stroke-width="7"/>${M('95 52 H245')}${M('105 41 V63 M235 41 V63')}`;
    a=H(99,96)+L('110 101 L163 112 L207 112')+L('136 105 L145 75 L162 55')+L('136 105 L153 76 L173 55')+L('207 112 L222 129 M207 112 L190 129');
    b=H(99,96)+L('110 101 L163 112 L207 112')+L('136 105 L148 82 L162 69')+L('136 105 L153 82 L173 69')+L('207 112 L222 129 M207 112 L190 129');
